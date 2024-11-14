@@ -1,31 +1,19 @@
 import { MongoClient } from "mongodb";
 import MeetupList from "../components/meetups/MeetupList"
+import Head from "next/head";
 
-const DUMMY_MEETUPS = [
-    {
-        id:'m1',
-        title:'The first meetup',
-        image:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg',
-        address:'Varanasi, UP, India',
-        description:'This is first meetup'
-    },
-{
-    id:'m2',
-    title:'The second meetup',
-    image:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg',
-    address:'Lucknow, UP, India',
-    description:'This is second meetup'
-},
-{
-    id:'m3',
-    title:'The third meetup',
-    image:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg',
-    address:'Noida, UP, India',
-    description:'This is third meetup'
-},
-]
 function HomePage(props){
-    return <MeetupList meetups={props.meetups} />
+    return (
+        <>
+        <Head>
+            <title>React Meetups</title>
+            <meta name="description" content="Browse a huge list of meetups and add meetups"></meta>
+        </Head>
+        <MeetupList meetups={props.meetups} />
+        </>
+        
+    ) 
+        
 }
 
 // export async function getServerSideProps( context){
