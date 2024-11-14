@@ -1,50 +1,56 @@
 import MeetupDetails from "@/components/meetups/MeetupDetails";
+import { MongoClient, ObjectId } from "mongodb";
 
-function MeetupDetail() {
+function MeetupDetail(props) {
 
     return <MeetupDetails
-        title='The first meetup'
-        image='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg'
-        address='Varanasi, UP, India'
-        description='This is first meetup'
+        title={props.meetupData.title}
+        image={props.meetupData.image}
+        address={props.meetupData.address}
+        description={props.meetupData.description}
     />
 }
 
 export async function getStaticPaths(){
+    const client= await MongoClient.connect('mongodb+srv://aybhu96:uO9frASk9bATnESZ@cluster0.1ygz9.mongodb.net/meetups?retryWrites=true&w=majority&appName=Cluster0')
+        const db=client.db();
+        
+        const meetupsCollection= db.collection('meetups');
+
+        const meetups=await meetupsCollection.find({}, { _id: 1}).toArray();
+
+        client.close();
 
     return {
         fallback: false,
-        paths:[
-            {
-                params:{
-                    meetupId:'m1',
-                }
-            },
-            {
-                params:{
-                    meetupId:'m2',
-                }
-            },
-            {
-                params:{
-                    meetupId:'m3',
-                }
+        paths: meetups.map((meetup)=> ({
+            params: {
+                meetupId: meetup._id.toString()
             }
-        ]
+        }))
     }
 }
 export async function getStaticProps(context) {
     
     const meetupId=context.params.meetupId;
+    const client= await MongoClient.connect('mongodb+srv://aybhu96:uO9frASk9bATnESZ@cluster0.1ygz9.mongodb.net/meetups?retryWrites=true&w=majority&appName=Cluster0')
+        const db=client.db();
+        
+        const meetupsCollection= db.collection('meetups');
+
+        const selectedMeetup=await meetupsCollection.findOne( { _id:ObjectId(meetupId),});
+
+        client.close();
+
 
     return {
         props: {
             meetupData: {
-                image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg',
-                id: meetupId,
-                title: 'The first meetup',
-                address: 'Varanasi, UP, India',
-                description: 'This is first meetup'
+                id: selectedMeetup._id.toString(),
+                title: selectedMeetup.title,
+                image:selectedMeetup.image,
+                address:selectedMeetup.address,
+                description:selectedMeetup.description,
             }
         }
     }
